@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import Timer from '../components/Timer.tsx';
 /*
 potential tests:
@@ -43,7 +43,9 @@ describe('the first set of basic timer tests', () => {
   it('counts down the time correctly', () => {
     vi.useFakeTimers();
     render(<Timer minutes={0} seconds={10} onEnd={() => {}} />);
-    vi.advanceTimersByTime(1000);
+    act(() => {
+      vi.advanceTimersByTime(1000); // Advance time by 1 second
+    })
     expect(screen.getByText('00:09')).toBeInTheDocument();
   });
 
@@ -51,15 +53,19 @@ describe('the first set of basic timer tests', () => {
     vi.useFakeTimers();
     const onEnd = vi.fn(() => {console.log("we are printing!")});
     render(<Timer minutes={0} seconds={1} onEnd={onEnd} />);
-    vi.advanceTimersByTime(1000); // Advance time by 1 second
-    expect(onEnd).toHaveBeenCalled();
+    act(() => {
+      vi.advanceTimersByTime(1000); // Advance time by 1 second
+    })
+    expect(onEnd).toHaveBeenCalledTimes(1);
   });
 
   it('stops the timer when unmounted', () => {
     vi.useFakeTimers();
     const { unmount } = render(<Timer minutes={0} seconds={10} onEnd={() => {}} />);
-    unmount();
-    vi.advanceTimersByTime(10000);
+    act(() => {
+      unmount();
+      vi.advanceTimersByTime(1000); // Advance time by 1 second
+    })
     expect(screen.queryByText('00:00')).not.toBeInTheDocument();
   });
 });
