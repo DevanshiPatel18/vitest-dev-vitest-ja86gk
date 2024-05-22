@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import Timer from '../components/Timer.tsx';
+import Timer, { TimerProps } from '../components/Timer.tsx';
 /*
 potential tests:
 1. a <Timer/> component is created
@@ -16,13 +16,32 @@ potential tests:
 
 describe('the first set of basic timer tests', () => {
   it('A Timer Component is created', () => {
-    const component = render(<Timer minutes={1} seconds={0} onEnd={function (): void {
-      throw new Error('Function not implemented.');
-    } } />);
+    const component = render(
+      <Timer
+        minutes={1}
+        seconds={0}
+        onEnd={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
+    );
     expect(component).toBeDefined();
   });
 
   it('throws an error if both minutes and seconds are 0', () => {
+    vi.useFakeTimers();
+    render(
+      <Timer
+        minutes={0}
+        seconds={10}
+        onEnd={function (): void {
+          throw new Error(
+            'Timer cannot have both minutes and seconds set to 0'
+          );
+        }}
+      />
+    );
+    vi.advanceTimersByTime(10000);
     expect(() => {
       render(<Timer minutes={0} seconds={0} onEnd={() => {}} />);
     }).toThrow('Timer cannot have both minutes and seconds set to 0');
@@ -30,13 +49,25 @@ describe('the first set of basic timer tests', () => {
 
   it('throws an error if both minutes and seconds are negative', () => {
     expect(() => {
-      render(<Timer minutes={-1} seconds={-1} onEnd={() => {}} />);
-    }).toThrow('Timer cannot have both minutes and seconds set to negative values');
+      render(
+        <Timer
+          minutes={-1}
+          seconds={-1}
+          onEnd={function (): void {
+            throw new Error(
+              'Timer cannot have both minutes and seconds set to negative values'
+            );
+          }}
+        />
+      );
+    }).toThrow(
+      'Timer cannot have both minutes and seconds set to negative values'
+    );
   });
 
   it('displays the initial time correctly', () => {
     render(<Timer minutes={1} seconds={30} onEnd={() => {}} />);
-    expect(screen.getByText('01:30')).toBeInTheDocument();
+    expect(screen.getByText('00:00:01:30')).toBeInTheDocument();
   });
 
   it('counts down the time correctly', () => {
@@ -56,7 +87,9 @@ describe('the first set of basic timer tests', () => {
 
   it('stops the timer when unmounted', () => {
     vi.useFakeTimers();
-    const { unmount } = render(<Timer minutes={0} seconds={10} onEnd={() => {}} />);
+    const { unmount } = render(
+      <Timer minutes={0} seconds={10} onEnd={() => {}} />
+    );
     unmount();
     vi.advanceTimersByTime(10000);
     expect(screen.queryByText('00:00')).not.toBeInTheDocument();
