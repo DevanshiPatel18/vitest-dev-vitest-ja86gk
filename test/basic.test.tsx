@@ -22,12 +22,13 @@ describe('the first set of basic timer tests', () => {
     expect(component).toBeDefined();
   });
 
+  // desgined to fail
   it('throws an error if both minutes and seconds are 0', () => {
     expect(() => {
       render(<Timer minutes={0} seconds={0} onEnd={() => {}} />);
     }).toThrow('Timer cannot have both minutes and seconds set to 0');
   });
-
+  //designed to fail
   it('throws an error if both minutes and seconds are negative', () => {
     expect(() => {
       render(<Timer minutes={-1} seconds={-1} onEnd={() => {}} />);
@@ -48,7 +49,7 @@ describe('the first set of basic timer tests', () => {
 
   it('calls the callback function when the timer ends', () => {
     vi.useFakeTimers();
-    const onEnd = vi.fn();
+    const onEnd = vi.fn(() => {console.log("we are printing!")});
     render(<Timer minutes={0} seconds={1} onEnd={onEnd} />);
     vi.advanceTimersByTime(1000); // Advance time by 1 second
     expect(onEnd).toHaveBeenCalled();

@@ -10,11 +10,11 @@ const Timer = (props: TimerProps) => {
   const [time, setTime] = useState(minutes * 60 + seconds);
 
 
-  useEffect(() => {
-    if (time === 0) {
-      onEnd();
-    }
-  }, [time, onEnd]);
+  // useEffect(() => {
+  //   if (time === 0) {
+  //     onEnd();
+  //   }
+  // }, [time, onEnd]);
 
   useEffect(() => {
     if (time > 0) {
